@@ -5,4 +5,4 @@ psycopg2-binary
 pydantic-settings
 pyjwt
 bcrypt
-email-validator
+email-validatorpytest
