@@ -1,7 +1,22 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { getToken } from "@/lib/api";
+
 export default function Home() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    // เช็กว่ามี Token อยู่ใน localStorage หรือไม่
+    const token = getToken();
+    setIsLoggedIn(!!token);
+  }, []);
+
   return (
     <div className="min-h-screen bg-black text-zinc-100 flex flex-col font-sans selection:bg-white selection:text-black relative overflow-hidden">
       
+      {/* Top Navbar */}
       <header className="w-full border-b border-zinc-800/60 bg-black/50 backdrop-blur-xl sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           
@@ -20,28 +35,44 @@ export default function Home() {
             <a href="https://nextjs.org" target="_blank" rel="noreferrer" className="hover:text-white transition-colors">Next.js</a>
           </nav>
 
-          {/* Right Action Button */}
-          <a
-            href="http://localhost:8000/docs"
-            target="_blank"
-            rel="noreferrer"
-            className="px-3.5 py-1.5 rounded-md bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-800 text-xs font-medium transition-all shadow-sm"
-          >
-            API Reference ↗
-          </a>
+          {/* Dynamic Action Buttons */}
+          <div className="flex items-center gap-3">
+            {isLoggedIn ? (
+              // แสดงเมื่อ ล็อกอินแล้ว
+              <Link
+                href="/profile"
+                className="px-4 py-1.5 rounded-md bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-semibold border border-zinc-700 transition-all shadow-sm"
+              >
+                My Profile
+              </Link>
+            ) : (
+              // แสดงเมื่อ ยังไม่ได้ล็อกอิน
+              <>
+                <Link
+                  href="/login"
+                  className="text-xs text-zinc-300 hover:text-white transition-colors px-3 py-1.5 rounded-md border border-zinc-800 hover:border-zinc-700 bg-zinc-900/60"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/register"
+                  className="px-3.5 py-1.5 rounded-md bg-white hover:bg-zinc-200 text-black text-xs font-semibold transition-all shadow-sm"
+                >
+                  Get Started
+                </Link>
+              </>
+            )}
+          </div>
         </div>
       </header>
 
       {/* Hero Section */}
       <main className="flex-1 flex flex-col items-center justify-center p-6 sm:p-12 relative">
-        
-        {/* Background Grid & Subtle Lighting */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#22222215_1px,transparent_1px),linear-gradient(to_bottom,#22222215_1px,transparent_1px)] bg-[size:3rem_3rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_40%,#000_70%,transparent_100%)] pointer-events-none" />
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-gradient-to-tr from-indigo-600/15 via-purple-500/10 to-transparent blur-[140px] rounded-full pointer-events-none" />
 
         <div className="max-w-4xl w-full text-center space-y-8 relative z-10 my-auto">
           
-          {/* Status Badge */}
           <div className="inline-flex items-center gap-2.5 px-3.5 py-1 rounded-full bg-zinc-950/80 border border-zinc-800 text-zinc-300 text-xs font-medium backdrop-blur-xl shadow-sm hover:border-zinc-700 transition-all duration-300">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -52,7 +83,6 @@ export default function Home() {
             </span>
           </div>
 
-          {/* Hero Title */}
           <div className="space-y-6">
             <h1 className="text-5xl sm:text-7xl font-bold tracking-tight text-white leading-[1.15]">
               Next-Gen Fullstack <br />
@@ -67,27 +97,40 @@ export default function Home() {
 
           {/* Action Buttons */}
           <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-            <a
-              href="#features"
+            <Link
+              href={isLoggedIn ? "/profile" : "/register"}
               className="relative group overflow-hidden rounded-lg p-[1px] font-medium text-sm transition-all duration-300 active:scale-95 shadow-lg shadow-white/5"
             >
               <span className="absolute inset-0 bg-gradient-to-r from-zinc-200 via-white to-zinc-400 rounded-lg" />
               <span className="relative px-7 py-3 block rounded-[7px] bg-white text-black font-semibold hover:bg-opacity-90 transition-all">
-                Explore System
+                {isLoggedIn ? "Go to Profile" : "Get Started"}
               </span>
+            </Link>
+
+            {/* Vercel Deploy Link */}
+            <a
+              href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+              target="_blank"
+              rel="noreferrer"
+              className="px-7 py-3 rounded-lg bg-zinc-900/90 text-zinc-300 border border-zinc-800 hover:border-zinc-700 hover:text-white font-medium text-sm backdrop-blur-md transition-all duration-300 active:scale-95 flex items-center gap-2"
+            >
+              <svg className="w-3.5 h-3.5 fill-current text-white" viewBox="0 0 76 65" xmlns="http://www.w3.org/2000/svg">
+                <path d="M37.5274 0L75.0548 65H0L37.5274 0Z" />
+              </svg>
+              Deploy to Vercel ↗
             </a>
 
+            {/* FastAPI API Reference Link */}
             <a
               href="http://localhost:8000/docs"
               target="_blank"
               rel="noreferrer"
-              className="px-7 py-3 rounded-lg bg-zinc-900/90 text-zinc-300 border border-zinc-800 hover:border-zinc-700 hover:text-white font-medium text-sm backdrop-blur-md transition-all duration-300 active:scale-95"
+              className="px-6 py-3 rounded-lg bg-zinc-950 text-zinc-400 border border-zinc-800 hover:border-zinc-700 hover:text-zinc-200 font-medium text-sm backdrop-blur-md transition-all duration-300 active:scale-95"
             >
               API Reference ↗
             </a>
           </div>
 
-          {/* Feature Cards Grid */}
           <div id="features" className="grid grid-cols-1 sm:grid-cols-3 gap-5 pt-16 text-left">
             <Card 
               badge="BACKEND"
